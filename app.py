@@ -4,6 +4,9 @@ import requests
 from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
 import logging
+import pymongo
+
+
 logging.basicConfig(filename="scrapper.log" , level=logging.INFO)
 
 app = Flask(__name__)
@@ -92,6 +95,30 @@ def index():
                         all_user_full_review.append({'Product':searchString.replace('+',' '),'Name': user_name,'Rating': user_rating,'Header':comment_header,'Review': final_review})
                 #print(all_user_full_review)
                 logging.info("log my final result {}".format(all_user_full_review))
+
+                
+                from pymongo.mongo_client import MongoClient
+
+                uri = "mongodb+srv://mahbubhossain249:IAMTHUNDER1@cluster0.nxhna4f.mongodb.net/?retryWrites=true&w=majority"
+
+                # Create a new client and connect to the server
+                client = MongoClient(uri)
+
+                # Send a ping to confirm a successful connection
+                try:
+                    client.admin.command('ping')
+                    print("Pinged your deployment. You successfully connected to MongoDB!")
+                except Exception as e:
+                    print(e)
+                
+                try:
+                    db = client['client']
+                    review_collection = db['review_scrape_data']
+                    review_collection.insert_many(all_user_full_review)
+                except Exception as e:
+                    print('something went wrong while inserting data in mongodb',e)
+                    logging.info(e)
+                    
 
                 return render_template('result.html', reviews=all_user_full_review)
             else:
