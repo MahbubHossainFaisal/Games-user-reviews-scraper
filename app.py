@@ -75,6 +75,11 @@ def index():
                         except:
                             logging.info('user_name')
                         #print(user_name)
+
+                        try:
+                            comment_header = user_details.find('h2').text
+                        except:
+                            logging.info('comment_header')
                         try:
                             review_summary = review.find_all('section',{'class':'userReview-body typography-format'})
                             final_review= review_summary[0].text
@@ -84,7 +89,7 @@ def index():
                         #print(final_review)
                         count+=1
                         print(count)
-                        all_user_full_review.append({'Product':searchString.replace('+',' '),'Name': user_name,'Rating': user_rating,'Review': final_review})
+                        all_user_full_review.append({'Product':searchString.replace('+',' '),'Name': user_name,'Rating': user_rating,'Header':comment_header,'Review': final_review})
                 #print(all_user_full_review)
                 logging.info("log my final result {}".format(all_user_full_review))
 
